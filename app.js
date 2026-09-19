@@ -1,6 +1,7 @@
 // 待辦清單的儲存鍵名稱
 const STORAGE_KEY = 'todo-list-items';
 const THEME_KEY = 'todo-theme-preference';
+const FILTER_KEY = 'todo-filter-preference';
 
 // 篩選狀態：all / active / completed
 let currentFilter = 'all';
@@ -37,6 +38,30 @@ function loadTodos() {
 // 儲存待辦資料到 localStorage
 function saveTodos(todos) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(todos));
+}
+
+// 取得使用者偏好的篩選條件：若資料錯誤則回退成全部
+function getPreferredFilter() {
+  const storedFilter = localStorage.getItem(FILTER_KEY);
+  const validFilters = ['all', 'active', 'completed'];
+
+  if (storedFilter && validFilters.includes(storedFilter)) {
+    return storedFilter;
+  }
+
+  return 'all';
+}
+
+// 套用篩選按鈕的選中狀態
+function applyFilterState(filterName) {
+  currentFilter = filterName;
+
+  filterButtons.forEach((button) => {
+    const isActive = button.dataset.filter === filterName;
+    button.classList.toggle('active', isActive);
+  });
+
+  localStorage.setItem(FILTER_KEY, filterName);
 }
 
 // 取得使用者偏好的主題：若從未手動選擇，則跟隨系統設定
@@ -229,13 +254,7 @@ function addTodo() {
 
 // 切換篩選狀態
 function setFilter(filterName) {
-  currentFilter = filterName;
-
-  filterButtons.forEach((button) => {
-    const isActive = button.dataset.filter === filterName;
-    button.classList.toggle('active', isActive);
-  });
-
+  applyFilterState(filterName);
   renderTodos();
 }
 
@@ -266,6 +285,10 @@ todoInput.addEventListener('keydown', (event) => {
 // 依照使用者偏好或系統設定初始化主題
 const initialTheme = getPreferredTheme();
 applyTheme(initialTheme);
+
+// 初始化篩選狀態，並保留使用者上次選擇
+currentFilter = getPreferredFilter();
+applyFilterState(currentFilter);
 
 // 首次載入時渲染資料
 renderTodos();
