@@ -15,6 +15,7 @@ const themeToggle = document.getElementById('theme-toggle');
 const themeIcon = document.querySelector('.theme-icon');
 const themeLabel = document.querySelector('.theme-label');
 const filterButtons = document.querySelectorAll('.filter-btn');
+const clearCompletedBtn = document.getElementById('clear-completed-btn');
 
 // 讀取 localStorage 中的待辦資料
 function loadTodos() {
@@ -97,9 +98,9 @@ function updateSummary(todos) {
 
   if (filteredTodos.length === 0) {
     if (currentFilter === 'active') {
-      emptyState.textContent = '沒有未完成的待辦事項';
+      emptyState.textContent = '目前沒有未完成的待辦事項，切換篩選查看其他項目';
     } else if (currentFilter === 'completed') {
-      emptyState.textContent = '沒有已完成的待辦事項';
+      emptyState.textContent = '目前沒有已完成的待辦事項，切換篩選查看其他項目';
     } else {
       emptyState.textContent = '還沒有任何待辦事項,新增一個吧!';
     }
@@ -109,6 +110,35 @@ function updateSummary(todos) {
   }
 
   emptyState.classList.remove('visible');
+}
+
+// 更新「清除已完成」按鈕的啟用/停用狀態
+function updateClearButtonState(todos) {
+  const hasCompletedItems = todos.some((todo) => todo.completed);
+  clearCompletedBtn.disabled = !hasCompletedItems;
+}
+
+// 清除所有已完成的待辦事項
+function clearCompleted() {
+  const todos = loadTodos();
+  const hasCompletedItems = todos.some((todo) => todo.completed);
+
+  // 如果沒有已完成項目,不執行
+  if (!hasCompletedItems) {
+    return;
+  }
+
+  // 彈出確認對話框
+  const confirmed = confirm('確定要清除所有已完成的待辦事項嗎？此操作無法復原。');
+
+  if (!confirmed) {
+    return;
+  }
+
+  // 過濾掉已完成的項目,只保留未完成的
+  const remainingTodos = todos.filter((todo) => !todo.completed);
+  saveTodos(remainingTodos);
+  renderTodos();
 }
 
 // 渲染待辦清單
@@ -171,6 +201,7 @@ function renderTodos() {
   });
 
   updateSummary(todos);
+  updateClearButtonState(todos);
 }
 
 // 新增待辦事項
@@ -219,6 +250,9 @@ themeToggle.addEventListener('click', () => {
 filterButtons.forEach((button) => {
   button.addEventListener('click', () => setFilter(button.dataset.filter));
 });
+
+// 清除已完成按鈕事件
+clearCompletedBtn.addEventListener('click', clearCompleted);
 
 // 事件綁定：新增按鈕與 Enter 鍵
 addButton.addEventListener('click', addTodo);
