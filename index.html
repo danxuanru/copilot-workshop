@@ -9,7 +9,13 @@
   <body>
     <main class="app">
       <section class="todo-card">
-        <h1>待辦清單</h1>
+        <header class="top-bar">
+          <h1>待辦清單</h1>
+          <button id="theme-toggle" class="theme-toggle" type="button" aria-label="切換深色模式">
+            <span class="theme-icon" aria-hidden="true">🌙</span>
+            <span class="theme-label">深色模式</span>
+          </button>
+        </header>
 
         <div class="input-row">
           <input
@@ -19,6 +25,12 @@
             aria-label="新增待辦事項"
           />
           <button id="add-btn" type="button">新增</button>
+        </div>
+
+        <div class="filter-row" aria-label="待辦篩選">
+          <button class="filter-btn active" type="button" data-filter="all">全部</button>
+          <button class="filter-btn" type="button" data-filter="active">未完成</button>
+          <button class="filter-btn" type="button" data-filter="completed">已完成</button>
         </div>
 
         <ul id="todo-list" class="todo-list" aria-live="polite"></ul>
