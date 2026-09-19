@@ -97,9 +97,9 @@ function updateSummary(todos) {
 
   if (filteredTodos.length === 0) {
     if (currentFilter === 'active') {
-      emptyState.textContent = '沒有未完成的待辦事項';
+      emptyState.textContent = '目前沒有未完成的待辦事項，切換篩選查看其他項目';
     } else if (currentFilter === 'completed') {
-      emptyState.textContent = '沒有已完成的待辦事項';
+      emptyState.textContent = '目前沒有已完成的待辦事項，切換篩選查看其他項目';
     } else {
       emptyState.textContent = '還沒有任何待辦事項,新增一個吧!';
     }
